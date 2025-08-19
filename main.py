@@ -12,49 +12,49 @@ import soundfile as sf
 from scipy.io import wavfile
 
 # --- Utils ---
-# def to_mono(wav):
-#     if wav.dim() == 1:
-#         # Already mono, just add channel dimension
-#         return wav.unsqueeze(0)
-#     elif wav.dim() == 2:
-#         if wav.shape[0] == 1:
-#             # Already mono with channel dimension
-#             return wav
-#         else:
-#             # Multi-channel, convert to mono by averaging channels
-#             return wav.mean(dim=0, keepdim=True)
-#     else:
-#         raise ValueError(f"Unexpected tensor dimensions: {wav.shape}")
+def to_mono(wav):
+    if wav.dim() == 1:
+        # Already mono, just add channel dimension
+        return wav.unsqueeze(0)
+    elif wav.dim() == 2:
+        if wav.shape[0] == 1:
+            # Already mono with channel dimension
+            return wav
+        else:
+            # Multi-channel, convert to mono by averaging channels
+            return wav.mean(dim=0, keepdim=True)
+    else:
+        raise ValueError(f"Unexpected tensor dimensions: {wav.shape}")
 
-# def mono_to_stereo(wav):
-#     """
-#     Convert mono audio to stereo (dual channel)
+def mono_to_stereo(wav):
+    """
+    Convert mono audio to stereo (dual channel)
     
-#     Args:
-#         wav: Mono audio tensor of shape (1, samples) or (samples,)
+    Args:
+        wav: Mono audio tensor of shape (1, samples) or (samples,)
     
-#     Returns:
-#         Stereo audio tensor of shape (2, samples)
-#     """
-#     if wav.dim() == 1:
-#         wav = wav.unsqueeze(0)  # Add channel dimension
+    Returns:
+        Stereo audio tensor of shape (2, samples)
+    """
+    if wav.dim() == 1:
+        wav = wav.unsqueeze(0)  # Add channel dimension
     
-#     if wav.shape[0] != 1:
-#         raise ValueError(f"Expected mono audio (1 channel), got {wav.shape[0]} channels")
+    if wav.shape[0] != 1:
+        raise ValueError(f"Expected mono audio (1 channel), got {wav.shape[0]} channels")
     
-#     mono_signal = wav[0]  # Extract the mono signal (samples,)
+    mono_signal = wav[0]  # Extract the mono signal (samples,)
 
-#     # Simple duplication: same signal in both left and right channels
-#     stereo = torch.stack([mono_signal, mono_signal], dim=0)
+    # Simple duplication: same signal in both left and right channels
+    stereo = torch.stack([mono_signal, mono_signal], dim=0)
     
-#     return stereo
+    return stereo
 
 # --- Data Augmentations ---
-# def augment_audio(wav, sr):
-#     arr = wav.numpy().squeeze()
-#     arr = librosa.effects.pitch_shift(y=arr, sr=sr, n_steps=random.choice([-2, -1, 0, 1, 2]))
-#     arr = librosa.effects.time_stretch(y=arr, rate=random.uniform(0.9, 1.1))
-#     return torch.tensor(arr).unsqueeze(0)
+def augment_audio(wav, sr):
+    arr = wav.numpy().squeeze()
+    arr = librosa.effects.pitch_shift(y=arr, sr=sr, n_steps=random.choice([-2, -1, 0, 1, 2]))
+    arr = librosa.effects.time_stretch(y=arr, rate=random.uniform(0.9, 1.1))
+    return torch.tensor(arr).unsqueeze(0)
 
 def get_mel_spec(wav, sr):
     spec = T.MelSpectrogram(sr, n_mels=64)(wav)
